@@ -35,9 +35,9 @@ func (h *_Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	} else if strings.Index(req.URL.Path, "/api/") == 0 {
 		// TODO: handle api request
 		log.I("[local] handle api req:", req.URL)
-	} else {
-		log.D("[local] unsupported req:", req.URL)
-		http.NotFound(w, req)
+	} else if strings.HasPrefix(req.URL.Path, "/") {
+		var f string = filepath.Join(webroot, req.URL.Path)
+		http.ServeFile(w, req, f)
 	}
 }
 
