@@ -4,6 +4,7 @@ import (
 	"github.com/czsilence/EvernoteTransfer/service"
 	"github.com/czsilence/EvernoteTransfer/web"
 	"github.com/czsilence/go/app"
+	"github.com/czsilence/go/config"
 	"github.com/czsilence/go/typo"
 )
 
@@ -18,10 +19,17 @@ const (
 )
 
 func main() {
+
+	config.Parse()
+
 	service.Start(typo.Map{
 		service.E_EvernoteConsumerKey:    E_CONSUMER_KEY,
 		service.E_EvernoteConsumerSecret: E_CONSUMER_SECRET,
 		service.E_YinxiangConsumerKey:    Y_CONSUMER_KEY,
 		service.E_YinxiangConsumerSecret: Y_CONSUMER_SECRET,
 	})
+
+	web.StartLocalHttpServer()
+
+	app.HandleInterrupt()
 }
