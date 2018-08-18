@@ -1,11 +1,13 @@
 package web
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/czsilence/EvernoteTransfer/erro"
 	"github.com/czsilence/go/log"
 	"github.com/czsilence/go/typo"
+	"github.com/gogo/protobuf/jsonpb"
 	"github.com/gogo/protobuf/proto"
 )
 
@@ -15,6 +17,12 @@ type APIProvider interface {
 
 var (
 	api_map map[string]APIProvider
+
+	// 默认处理成功的返回值
+	default_response_success = &ErrorMessage{
+		ErrCode: 0,
+		ErrMsg:  "sucess",
+	}
 )
 
 func init() {
@@ -41,28 +49,37 @@ func map_api(name string, w http.ResponseWriter, req *http.Request) (err erro.Er
 			}
 			err = write_response_msg(w, err_msg)
 		} else {
-			log.D("[local] handle api failed:", resp)
+			log.D("[local] handle api done:", resp)
 			err = write_response_msg(w, resp)
 		}
 	} else {
+		log.I("[local] unknown api:", name)
 		err = erro.E_API_UnknownAPI.F("name")
 	}
 	return
 }
 
-func write_response_msg(w http.ResponseWriter, msg proto.Message) (err erro.Error) {
-	if data, me := proto.Marshal(msg); me != nil {
+func write_response_msg(w http.ResponseWriter, resp proto.Message) (err erro.Error) {
+	if resp == nil {
+		resp = default_response_success
+	}
+
+	marshaler := &jsonpb.Marshaler{
+		OrigName: true,
+	}
+	if data, me := marshaler.MarshalToString(resp); me != nil {
 		err = erro.E_API_MarshalResponseFailed.F("err: %v", me)
 	} else {
-		var cnt = 0
-		for cnt < len(data) {
-			if _cnt, we := w.Write(data[cnt:]); we != nil {
-				err = erro.E_API_WriteResponseFailed.F("err: %v", we)
-				break
-			} else {
-				cnt += _cnt
-			}
-		}
+		fmt.Fprint(w, data)
+		// var cnt = 0
+		// for cnt < len(data) {
+		// 	if _cnt, we := w.Write(data[cnt:]); we != nil {
+		// 		err = erro.E_API_WriteResponseFailed.F("err: %v", we)
+		// 		break
+		// 	} else {
+		// 		cnt += _cnt
+		// 	}
+		// }
 	}
 	return
 }
