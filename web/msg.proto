@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package web;
+
+//////////////////////////////////////////////////
+// error message
+
+message error_message {
+    int32 err_code = 1;
+    string err_msg = 2;
+}
+
