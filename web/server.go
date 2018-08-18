@@ -32,9 +32,8 @@ type _Handler struct {
 func (h *_Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	if req.URL.Path == "/" {
 		index(w, req)
-	} else if strings.Index(req.URL.Path, "/api/") == 0 {
-		// TODO: handle api request
-		log.I("[local] handle api req:", req.URL)
+	} else if strings.HasPrefix(req.URL.Path, "/api/") {
+		map_api(strings.TrimPrefix(req.URL.Path, "/api/"), w, req)
 	} else if strings.HasPrefix(req.URL.Path, "/") {
 		var f string = filepath.Join(webroot, req.URL.Path)
 		http.ServeFile(w, req, f)
