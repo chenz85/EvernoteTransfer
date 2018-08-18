@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-	"github.com/czsilence/EvernoteTransfer/typo"
+	"github.com/czsilence/go/typo"
 )
 
 const (
