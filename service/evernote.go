@@ -13,11 +13,7 @@ func init() {
 }
 
 func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
-	var oauth_ctx = &OAuthContext{
-		Key:    opt.Evernote.Key,
-		Secret: opt.Evernote.Secret,
-	}
-	if auth_url, ae := oauth_ctx.Auth(); ae != nil {
+	if auth_url, ae := OAuth_Auth(opt.Evernote.Key, opt.Evernote.Secret); ae != nil {
 		err = ae
 	} else {
 		resp_msg = &ApiRespOauth{
@@ -28,9 +24,10 @@ func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
 }
 
 func _api_oauth_callback(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
-	var oauth_token = ctx.Querys["oauth_token"]
-	var oauth_verifier = ctx.Querys["oauth_verifier"]
-	var sandbox_lnb = ctx.Querys["sandbox_lnb"]
-	log.W("TODO:", oauth_token, oauth_verifier, sandbox_lnb)
+	if tok, verifier, pe := OAuth_ParseAccessToken(ctx.Req()); pe != nil {
+		err = pe
+	} else {
+		log.W("TODO:", tok, verifier)
+	}
 	return
 }

@@ -3,7 +3,6 @@ package web
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 
 	"github.com/czsilence/EvernoteTransfer/erro"
 	"github.com/czsilence/go/log"
@@ -15,7 +14,11 @@ import (
 type APIContext struct {
 	msg    proto.Message
 	header typo.Any
-	Querys url.Values
+	req    *http.Request
+}
+
+func (ctx *APIContext) Req() *http.Request {
+	return ctx.req
 }
 
 type APIProvider interface {
@@ -75,7 +78,7 @@ func map_api(name string, w http.ResponseWriter, req *http.Request) (err erro.Er
 	if item, ex := api_map[name]; ex {
 		log.I("[local] handle api req:", name)
 		var ctx = &APIContext{
-			Querys: req.URL.Query(),
+			req: req,
 		}
 		if resp, re := item.Process(ctx); re != nil {
 			log.D("[local] handle api failed:", re)
