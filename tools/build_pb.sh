@@ -14,3 +14,4 @@ output_flag=$output_flag:.
 cd $project
 
 protoc $include_path --${binary}_out=$output_flag web/msg.proto
+protoc $include_path --${binary}_out=$output_flag service/msg.proto

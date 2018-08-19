@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package service;
+
+// api: oauth
+message api_resp_oauth {
+    string authorization_url = 1;
+}
