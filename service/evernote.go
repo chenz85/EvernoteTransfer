@@ -13,7 +13,7 @@ func init() {
 }
 
 func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
-	if auth_url, ae := OAuth_Auth(opt.Evernote.Key, opt.Evernote.Secret); ae != nil {
+	if auth_url, ae := OAuth_Auth(); ae != nil {
 		err = ae
 	} else {
 		resp_msg = &ApiRespOauth{

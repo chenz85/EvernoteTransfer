@@ -10,10 +10,12 @@ import (
 // oauth for evernote
 // ref: https://dev.evernote.com/doc/articles/authentication.php
 
-func OAuth_Auth(consumer_key, consumer_secret string) (auth_url string, err erro.Error) {
-	config := oauth1.Config{
-		ConsumerKey:    consumer_key,
-		ConsumerSecret: consumer_secret,
+var oauth_config *oauth1.Config
+
+func oauth_init() {
+	oauth_config = &oauth1.Config{
+		ConsumerKey:    opt.Evernote.Key,
+		ConsumerSecret: opt.Evernote.Secret,
 		CallbackURL:    "http://127.0.0.1:8001/api/en/oauth/callback",
 		Endpoint: oauth1.Endpoint{
 			RequestTokenURL: "https://sandbox.evernote.com/oauth",
@@ -21,10 +23,12 @@ func OAuth_Auth(consumer_key, consumer_secret string) (auth_url string, err erro
 			AccessTokenURL:  "https://sandbox.evernote.com/oauth",
 		},
 	}
+}
 
-	if tok, _, re := config.RequestToken(); re != nil {
+func OAuth_Auth() (auth_url string, err erro.Error) {
+	if tok, _, re := oauth_config.RequestToken(); re != nil {
 		err = erro.E_OAUTH_FAILED.F("err: %v", re)
-	} else if authorizationURL, ae := config.AuthorizationURL(tok); ae != nil {
+	} else if authorizationURL, ae := oauth_config.AuthorizationURL(tok); ae != nil {
 		err = erro.E_OAUTH_FAILED.F("err: %v", ae)
 	} else {
 		auth_url = authorizationURL.String()
