@@ -3,18 +3,16 @@ package service
 import (
 	"github.com/czsilence/EvernoteTransfer/erro"
 	"github.com/czsilence/EvernoteTransfer/web"
-	"github.com/czsilence/go/typo"
+	"github.com/czsilence/go/log"
 	"github.com/gogo/protobuf/proto"
 )
 
 func init() {
-	web.RegisterAPIProvider("en/oauth", new(_api_en_oauth))
+	web.RegisterAPIFunc("en/oauth", _api_oauth)
+	web.RegisterAPIFunc("en/oauth/callback", _api_oauth_callback)
 }
 
-type _api_en_oauth struct {
-}
-
-func (api *_api_en_oauth) Process(msg proto.Message, header typo.Any) (resp_msg proto.Message, err erro.Error) {
+func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
 	var oauth_ctx = &OAuthContext{
 		Key:    opt.Evernote.Key,
 		Secret: opt.Evernote.Secret,
@@ -26,5 +24,13 @@ func (api *_api_en_oauth) Process(msg proto.Message, header typo.Any) (resp_msg 
 			AuthorizationUrl: auth_url,
 		}
 	}
+	return
+}
+
+func _api_oauth_callback(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
+	var oauth_token = ctx.Querys["oauth_token"]
+	var oauth_verifier = ctx.Querys["oauth_verifier"]
+	var sandbox_lnb = ctx.Querys["sandbox_lnb"]
+	log.W("TODO:", oauth_token, oauth_verifier, sandbox_lnb)
 	return
 }

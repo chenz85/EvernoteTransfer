@@ -3,6 +3,7 @@ package web
 import (
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/czsilence/EvernoteTransfer/erro"
 	"github.com/czsilence/go/log"
@@ -11,22 +12,28 @@ import (
 	"github.com/gogo/protobuf/proto"
 )
 
-type APIProvider interface {
-	Process(msg proto.Message, header typo.Any) (resp_msg proto.Message, err erro.Error)
+type APIContext struct {
+	msg    proto.Message
+	header typo.Any
+	Querys url.Values
 }
 
-type APIFunc = func(msg proto.Message, header typo.Any) (resp_msg proto.Message, err erro.Error)
+type APIProvider interface {
+	Process(ctx *APIContext) (resp_msg proto.Message, err erro.Error)
+}
+
+type APIFunc = func(ctx *APIContext) (resp_msg proto.Message, err erro.Error)
 
 type APIItem struct {
 	o APIProvider
 	f APIFunc
 }
 
-func (i *APIItem) Process(msg proto.Message, header typo.Any) (resp_msg proto.Message, err erro.Error) {
+func (i *APIItem) Process(ctx *APIContext) (resp_msg proto.Message, err erro.Error) {
 	if i.f != nil {
-		return i.f(msg, header)
+		return i.f(ctx)
 	} else {
-		return i.o.Process(msg, header)
+		return i.o.Process(ctx)
 	}
 }
 
@@ -67,7 +74,10 @@ func RegisterAPIFunc(name string, f APIFunc) {
 func map_api(name string, w http.ResponseWriter, req *http.Request) (err erro.Error) {
 	if item, ex := api_map[name]; ex {
 		log.I("[local] handle api req:", name)
-		if resp, re := item.Process(nil, nil); re != nil {
+		var ctx = &APIContext{
+			Querys: req.URL.Query(),
+		}
+		if resp, re := item.Process(ctx); re != nil {
 			log.D("[local] handle api failed:", re)
 			// 返回错误信息
 			var err_msg = &ErrorMessage{
