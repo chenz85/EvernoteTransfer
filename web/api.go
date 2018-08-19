@@ -15,8 +15,23 @@ type APIProvider interface {
 	Process(msg proto.Message, header typo.Any) (resp_msg proto.Message, err erro.Error)
 }
 
+type APIFunc = func(msg proto.Message, header typo.Any) (resp_msg proto.Message, err erro.Error)
+
+type APIItem struct {
+	o APIProvider
+	f APIFunc
+}
+
+func (i *APIItem) Process(msg proto.Message, header typo.Any) (resp_msg proto.Message, err erro.Error) {
+	if i.f != nil {
+		return i.f(msg, header)
+	} else {
+		return i.o.Process(msg, header)
+	}
+}
+
 var (
-	api_map map[string]APIProvider
+	api_map map[string]*APIItem
 
 	// 默认处理成功的返回值
 	default_response_success = &ErrorMessage{
@@ -26,21 +41,33 @@ var (
 )
 
 func init() {
-	api_map = make(map[string]APIProvider)
+	api_map = make(map[string]*APIItem)
 }
 
 func RegisterAPIProvider(name string, privider APIProvider) {
 	if _, ex := api_map[name]; ex {
 		log.E("[web] duplicated api:", name)
 	} else {
-		api_map[name] = privider
+		api_map[name] = &APIItem{
+			o: privider,
+		}
+	}
+}
+
+func RegisterAPIFunc(name string, f APIFunc) {
+	if _, ex := api_map[name]; ex {
+		log.E("[web] duplicated api:", name)
+	} else {
+		api_map[name] = &APIItem{
+			f: f,
+		}
 	}
 }
 
 func map_api(name string, w http.ResponseWriter, req *http.Request) (err erro.Error) {
-	if provider, ex := api_map[name]; ex {
+	if item, ex := api_map[name]; ex {
 		log.I("[local] handle api req:", name)
-		if resp, re := provider.Process(nil, nil); re != nil {
+		if resp, re := item.Process(nil, nil); re != nil {
 			log.D("[local] handle api failed:", re)
 			// 返回错误信息
 			var err_msg = &ErrorMessage{
