@@ -24,7 +24,7 @@ func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
 }
 
 func _api_oauth_callback(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
-	if tok, verifier, pe := OAuth_ParseAccessToken(ctx.Req()); pe != nil {
+	if tok, verifier, pe := OAuth_ParseCallback(ctx.Req()); pe != nil {
 		err = pe
 	} else {
 		log.W("TODO:", tok, verifier)

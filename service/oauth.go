@@ -36,7 +36,7 @@ func OAuth_Auth() (auth_url string, err erro.Error) {
 	return
 }
 
-func OAuth_ParseAccessToken(req *http.Request) (tok, verifier string, err erro.Error) {
+func OAuth_ParseCallback(req *http.Request) (tok, verifier string, err erro.Error) {
 	if _tok, _verifier, pe := oauth1.ParseAuthorizationCallback(req); pe != nil {
 		err = erro.E_OAUTH_FAILED.F("err: %v", pe)
 	} else {
