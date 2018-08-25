@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/czsilence/EvernoteTransfer/erro"
-	"github.com/dghubble/oauth1"
+	"github.com/czsilence/oauth1"
 )
 
 // oauth for evernote
