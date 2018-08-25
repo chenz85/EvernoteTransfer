@@ -30,6 +30,7 @@ type APIFunc = func(ctx *APIContext) (resp_msg proto.Message, err erro.Error)
 
 type APIItem struct {
 	n string
+	m string
 	o APIProvider
 	f APIFunc
 }
@@ -56,23 +57,25 @@ func init() {
 	api_map = make(map[string]*APIItem)
 }
 
-func RegisterAPIProvider(name string, privider APIProvider) {
+func RegisterAPIProvider(name string, method string, privider APIProvider) {
 	if _, ex := api_map[name]; ex {
 		log.E("[web] duplicated api:", name)
 	} else {
 		api_map[name] = &APIItem{
 			n: name,
+			m: method,
 			o: privider,
 		}
 	}
 }
 
-func RegisterAPIFunc(name string, f APIFunc) {
+func RegisterAPIFunc(name string, method string, f APIFunc) {
 	if _, ex := api_map[name]; ex {
 		log.E("[web] duplicated api:", name)
 	} else {
 		api_map[name] = &APIItem{
 			n: name,
+			m: method,
 			f: f,
 		}
 	}
@@ -80,7 +83,14 @@ func RegisterAPIFunc(name string, f APIFunc) {
 
 func map_api(r *gin.Engine) {
 	for name, item := range api_map {
-		r.POST("/api/"+name, item.Handle)
+		switch item.m {
+		case http.MethodGet:
+			r.GET("/api/"+name, item.Handle)
+		case http.MethodPost:
+			r.POST("/api/"+name, item.Handle)
+		default:
+			log.E("unsupported api method:", item.m)
+		}
 	}
 }
 

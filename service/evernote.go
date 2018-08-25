@@ -1,6 +1,8 @@
 package service
 
 import (
+	"net/http"
+
 	"github.com/czsilence/EvernoteTransfer/erro"
 	"github.com/czsilence/EvernoteTransfer/web"
 	"github.com/czsilence/go/log"
@@ -8,8 +10,8 @@ import (
 )
 
 func init() {
-	web.RegisterAPIFunc("en/oauth", _api_oauth)
-	web.RegisterAPIFunc("en/oauth/callback", _api_oauth_callback)
+	web.RegisterAPIFunc("en/oauth", http.MethodPost, _api_oauth)
+	web.RegisterAPIFunc("en/oauth/callback", http.MethodGet, _api_oauth_callback)
 }
 
 func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
