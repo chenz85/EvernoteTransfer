@@ -51,6 +51,7 @@ func OAuth_AccessToken(tok, verifier, request_secret string) (response_values ma
 	if ae != nil {
 		err = erro.E_OAUTH_FAILED.F("err: %v", ae)
 	} else {
+		response_values = make(map[string]string)
 		for k, _ := range values {
 			response_values[k] = values.Get(k)
 		}
