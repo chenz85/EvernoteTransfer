@@ -16,6 +16,20 @@ function request(url, data, method, success, fail) {
         // console.log(response.header);
 
         var data = response;
+        if (typeof data === 'string') {
+            try {
+                data = JSON.parse(response)
+            } catch (e) {
+                var error = {
+                    errCode: -1,
+                    errMsg: 'invalid response data:' + data,
+                };
+        
+                fail.call(null, error);
+                return      
+            }
+        }
+
         console.log('[http] response data:', data);
         if (data.errCode === undefined || data.errCode == 0) {
             // 处理成功返回数据

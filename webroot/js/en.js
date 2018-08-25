@@ -7,6 +7,7 @@ function start() {
         api.oauth({
             success: function(data) {
                 console.log('oauth:', data)
+                console.log('url:', data.authorization_url)
                 if (data.authorization_url) {
                     window.location = data.authorization_url
                 }
