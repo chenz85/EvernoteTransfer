@@ -36,13 +36,19 @@ func _api_oauth_callback(ctx *web.APIContext) (resp_msg proto.Message, err erro.
 		if sec, ex := badger.DB().Get("oauth_req_secret:" + sid); !ex {
 			err = erro.E_OAuth_NoRequestSecret
 		} else {
-			var access_token, access_secret string
-			if access_token, access_secret, err = OAuth_AccessToken(tok, verifier, string(sec)); err == nil {
+			if values, ate := OAuth_AccessToken(tok, verifier, string(sec)); ate != nil {
+				err = ate
+			} else {
 				var oauth_info = &OauthInfo{
-					Sid:          sid,
-					AccessToken:  access_token,
-					AccessSecret: access_secret,
+					Sid: sid,
 				}
+
+				oauth_info.AccessToken, _ = values["oauth_token"]
+				oauth_info.AccessSecret, _ = values["oauth_token_secret"]
+				oauth_info.EdamUserId, _ = values["edam_userId"]
+				oauth_info.EdamShard, _ = values["edam_shard"]
+				oauth_info.EdamNoteStoreUrl, _ = values["edam_noteStoreUrl"]
+				oauth_info.EdamExpires, _ = values["edam_expires"]
 				err = storage.Put(badger.DB(), "oauth:"+sid, oauth_info)
 			}
 		}

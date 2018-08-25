@@ -32,7 +32,7 @@ func (m *ApiRespOauth) Reset()         { *m = ApiRespOauth{} }
 func (m *ApiRespOauth) String() string { return proto.CompactTextString(m) }
 func (*ApiRespOauth) ProtoMessage()    {}
 func (*ApiRespOauth) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_6d77b74d708441e4, []int{0}
+	return fileDescriptor_msg_ddd339fe1dd16074, []int{0}
 }
 func (m *ApiRespOauth) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -69,9 +69,14 @@ func (m *ApiRespOauth) GetAuthorizationUrl() string {
 }
 
 type OauthInfo struct {
-	Sid                  string   `protobuf:"bytes,1,opt,name=sid,proto3" json:"sid,omitempty"`
-	AccessToken          string   `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
-	AccessSecret         string   `protobuf:"bytes,3,opt,name=access_secret,json=accessSecret,proto3" json:"access_secret,omitempty"`
+	Sid          string `protobuf:"bytes,1,opt,name=sid,proto3" json:"sid,omitempty"`
+	AccessToken  string `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	AccessSecret string `protobuf:"bytes,3,opt,name=access_secret,json=accessSecret,proto3" json:"access_secret,omitempty"`
+	EdamShard    string `protobuf:"bytes,4,opt,name=edam_shard,json=edamShard,proto3" json:"edam_shard,omitempty"`
+	EdamUserId   string `protobuf:"bytes,5,opt,name=edam_userId,json=edamUserId,proto3" json:"edam_userId,omitempty"`
+	// token过期时间
+	EdamExpires          string   `protobuf:"bytes,6,opt,name=edam_expires,json=edamExpires,proto3" json:"edam_expires,omitempty"`
+	EdamNoteStoreUrl     string   `protobuf:"bytes,7,opt,name=edam_noteStoreUrl,json=edamNoteStoreUrl,proto3" json:"edam_noteStoreUrl,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -81,7 +86,7 @@ func (m *OauthInfo) Reset()         { *m = OauthInfo{} }
 func (m *OauthInfo) String() string { return proto.CompactTextString(m) }
 func (*OauthInfo) ProtoMessage()    {}
 func (*OauthInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_6d77b74d708441e4, []int{1}
+	return fileDescriptor_msg_ddd339fe1dd16074, []int{1}
 }
 func (m *OauthInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -127,6 +132,34 @@ func (m *OauthInfo) GetAccessToken() string {
 func (m *OauthInfo) GetAccessSecret() string {
 	if m != nil {
 		return m.AccessSecret
+	}
+	return ""
+}
+
+func (m *OauthInfo) GetEdamShard() string {
+	if m != nil {
+		return m.EdamShard
+	}
+	return ""
+}
+
+func (m *OauthInfo) GetEdamUserId() string {
+	if m != nil {
+		return m.EdamUserId
+	}
+	return ""
+}
+
+func (m *OauthInfo) GetEdamExpires() string {
+	if m != nil {
+		return m.EdamExpires
+	}
+	return ""
+}
+
+func (m *OauthInfo) GetEdamNoteStoreUrl() string {
+	if m != nil {
+		return m.EdamNoteStoreUrl
 	}
 	return ""
 }
@@ -195,6 +228,30 @@ func (m *OauthInfo) MarshalTo(dAtA []byte) (int, error) {
 		i = encodeVarintMsg(dAtA, i, uint64(len(m.AccessSecret)))
 		i += copy(dAtA[i:], m.AccessSecret)
 	}
+	if len(m.EdamShard) > 0 {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintMsg(dAtA, i, uint64(len(m.EdamShard)))
+		i += copy(dAtA[i:], m.EdamShard)
+	}
+	if len(m.EdamUserId) > 0 {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintMsg(dAtA, i, uint64(len(m.EdamUserId)))
+		i += copy(dAtA[i:], m.EdamUserId)
+	}
+	if len(m.EdamExpires) > 0 {
+		dAtA[i] = 0x32
+		i++
+		i = encodeVarintMsg(dAtA, i, uint64(len(m.EdamExpires)))
+		i += copy(dAtA[i:], m.EdamExpires)
+	}
+	if len(m.EdamNoteStoreUrl) > 0 {
+		dAtA[i] = 0x3a
+		i++
+		i = encodeVarintMsg(dAtA, i, uint64(len(m.EdamNoteStoreUrl)))
+		i += copy(dAtA[i:], m.EdamNoteStoreUrl)
+	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
@@ -235,6 +292,22 @@ func (m *OauthInfo) Size() (n int) {
 		n += 1 + l + sovMsg(uint64(l))
 	}
 	l = len(m.AccessSecret)
+	if l > 0 {
+		n += 1 + l + sovMsg(uint64(l))
+	}
+	l = len(m.EdamShard)
+	if l > 0 {
+		n += 1 + l + sovMsg(uint64(l))
+	}
+	l = len(m.EdamUserId)
+	if l > 0 {
+		n += 1 + l + sovMsg(uint64(l))
+	}
+	l = len(m.EdamExpires)
+	if l > 0 {
+		n += 1 + l + sovMsg(uint64(l))
+	}
+	l = len(m.EdamNoteStoreUrl)
 	if l > 0 {
 		n += 1 + l + sovMsg(uint64(l))
 	}
@@ -453,6 +526,122 @@ func (m *OauthInfo) Unmarshal(dAtA []byte) error {
 			}
 			m.AccessSecret = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EdamShard", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsg
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EdamShard = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EdamUserId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsg
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EdamUserId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EdamExpires", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsg
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EdamExpires = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EdamNoteStoreUrl", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsg
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EdamNoteStoreUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsg(dAtA[iNdEx:])
@@ -580,20 +769,25 @@ var (
 	ErrIntOverflowMsg   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("service/msg.proto", fileDescriptor_msg_6d77b74d708441e4) }
+func init() { proto.RegisterFile("service/msg.proto", fileDescriptor_msg_ddd339fe1dd16074) }
 
-var fileDescriptor_msg_6d77b74d708441e4 = []byte{
-	// 185 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2c, 0x4e, 0x2d, 0x2a,
-	0xcb, 0x4c, 0x4e, 0xd5, 0xcf, 0x2d, 0x4e, 0xd7, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x87,
-	0x0a, 0x29, 0xd9, 0x72, 0xf1, 0x25, 0x16, 0x64, 0xc6, 0x17, 0xa5, 0x16, 0x17, 0xc4, 0xe7, 0x27,
-	0x96, 0x96, 0x64, 0x08, 0x69, 0x73, 0x09, 0x82, 0xe8, 0xfc, 0xa2, 0xcc, 0xaa, 0xc4, 0x92, 0xcc,
-	0xfc, 0xbc, 0xf8, 0xd2, 0xa2, 0x1c, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20, 0x01, 0x14, 0x89,
-	0xd0, 0xa2, 0x1c, 0xa5, 0x34, 0x2e, 0x2e, 0xb0, 0xae, 0xf8, 0xcc, 0xbc, 0xb4, 0x7c, 0x21, 0x01,
-	0x2e, 0xe6, 0xe2, 0xcc, 0x14, 0xa8, 0x62, 0x10, 0x53, 0x48, 0x91, 0x8b, 0x27, 0x31, 0x39, 0x39,
-	0xb5, 0xb8, 0x38, 0xbe, 0x24, 0x3f, 0x3b, 0x35, 0x4f, 0x82, 0x09, 0x2c, 0xc5, 0x0d, 0x11, 0x0b,
-	0x01, 0x09, 0x09, 0x29, 0x73, 0xf1, 0x42, 0x95, 0x14, 0xa7, 0x26, 0x17, 0xa5, 0x96, 0x48, 0x30,
-	0x83, 0xd5, 0x40, 0xf5, 0x05, 0x83, 0xc5, 0x9c, 0x78, 0x4e, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48,
-	0x8e, 0xf1, 0xc1, 0x23, 0x39, 0xc6, 0x24, 0x36, 0xb0, 0x27, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff,
-	0xff, 0x1d, 0xe2, 0x15, 0xb6, 0xd9, 0x00, 0x00, 0x00,
+var fileDescriptor_msg_ddd339fe1dd16074 = []byte{
+	// 263 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x54, 0x90, 0xb1, 0x4e, 0xc3, 0x30,
+	0x10, 0x86, 0x65, 0x0a, 0xad, 0x7a, 0x2d, 0xa8, 0xf5, 0xe4, 0x85, 0x02, 0x65, 0x41, 0x42, 0x82,
+	0x81, 0x99, 0x05, 0x89, 0x81, 0x85, 0x81, 0x90, 0xd9, 0x32, 0xc9, 0x41, 0x2d, 0xd2, 0x38, 0xba,
+	0x73, 0x10, 0xe2, 0x09, 0x19, 0x79, 0x04, 0x94, 0x87, 0x60, 0x46, 0xbe, 0x64, 0x80, 0xc9, 0xd6,
+	0xf7, 0x7f, 0xbf, 0x74, 0x77, 0xb0, 0x64, 0xa4, 0x37, 0x5f, 0xe0, 0xe5, 0x96, 0x5f, 0x2e, 0x1a,
+	0x0a, 0x31, 0xe8, 0xc9, 0x80, 0xd6, 0xd7, 0x70, 0xe0, 0x1a, 0x6f, 0x09, 0xb9, 0xb1, 0xc1, 0xb5,
+	0x71, 0xa3, 0xcf, 0x61, 0x99, 0xde, 0x40, 0xfe, 0xc3, 0x45, 0x1f, 0x6a, 0xdb, 0x52, 0x65, 0xd4,
+	0xb1, 0x3a, 0x9b, 0x3e, 0x2c, 0xfe, 0x05, 0x39, 0x55, 0xeb, 0x1f, 0x05, 0x20, 0x35, 0xeb, 0xeb,
+	0xe7, 0xa0, 0x17, 0x30, 0x62, 0x5f, 0x0e, 0x76, 0xfa, 0xea, 0x13, 0x98, 0xbb, 0xa2, 0x40, 0x66,
+	0x1b, 0xc3, 0x2b, 0xd6, 0x66, 0x47, 0xa2, 0x59, 0xcf, 0x1e, 0x13, 0xd2, 0xa7, 0xb0, 0x3f, 0x28,
+	0x8c, 0x05, 0x61, 0x34, 0x23, 0x71, 0x86, 0x5e, 0x26, 0x4c, 0x1f, 0x02, 0x60, 0xe9, 0xb6, 0x96,
+	0x37, 0x8e, 0x4a, 0xb3, 0x2b, 0xc6, 0x34, 0x91, 0x2c, 0x01, 0x7d, 0x04, 0x33, 0x89, 0x5b, 0x46,
+	0xba, 0x2b, 0xcd, 0x9e, 0xe4, 0xd2, 0xc8, 0x85, 0xa4, 0x39, 0x44, 0xc0, 0xf7, 0xc6, 0x13, 0xb2,
+	0x19, 0xf7, 0x73, 0x24, 0x76, 0xdb, 0xa3, 0xb4, 0xb8, 0x28, 0x75, 0x88, 0x98, 0xc5, 0x40, 0x98,
+	0x53, 0x65, 0x26, 0xfd, 0xe2, 0x29, 0xb8, 0xff, 0xc3, 0x6f, 0xe6, 0x9f, 0xdd, 0x4a, 0x7d, 0x75,
+	0x2b, 0xf5, 0xdd, 0xad, 0xd4, 0xd3, 0x58, 0xae, 0x7a, 0xf5, 0x1b, 0x00, 0x00, 0xff, 0xff, 0x9b,
+	0xfd, 0x3c, 0x09, 0x6a, 0x01, 0x00, 0x00,
 }

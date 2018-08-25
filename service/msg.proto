@@ -11,4 +11,9 @@ message oauth_info {
     string sid = 1;
     string access_token = 2;
     string access_secret = 3;
+    string edam_shard = 4;
+    string edam_userId = 5;
+    // token过期时间
+    string edam_expires = 6;
+    string edam_noteStoreUrl = 7;
 }
