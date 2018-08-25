@@ -2,11 +2,9 @@ package web
 
 import (
 	"flag"
-	"net/http"
 	"path/filepath"
-	"strings"
 
-	"github.com/czsilence/go/log"
+	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -23,25 +21,12 @@ func StartLocalHttpServer() {
 }
 
 func start_internal() {
-	http.ListenAndServe("127.0.0.1:8001", new(_Handler))
-}
+	r := gin.Default()
 
-type _Handler struct {
-}
-
-func (h *_Handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/" {
-		index(w, req)
-	} else if strings.HasPrefix(req.URL.Path, "/api/") {
-		map_api(strings.TrimPrefix(req.URL.Path, "/api/"), w, req)
-	} else if strings.HasPrefix(req.URL.Path, "/") {
-		var f string = filepath.Join(webroot, req.URL.Path)
-		http.ServeFile(w, req, f)
-	}
-}
-
-func index(w http.ResponseWriter, req *http.Request) {
+	map_api(r)
 	var index_file string = filepath.Join(webroot, "index.html")
-	log.D2("[local] index file: %s", index_file)
-	http.ServeFile(w, req, index_file)
+	r.StaticFile("/", index_file)
+	r.StaticFile("/index.html", index_file)
+	r.Static("/js", filepath.Join(webroot, "js"))
+	r.Run("127.0.0.1:8001")
 }

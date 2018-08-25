@@ -1,8 +1,9 @@
 package web
 
 import (
-	"fmt"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/czsilence/EvernoteTransfer/erro"
 	"github.com/czsilence/go/log"
@@ -28,6 +29,7 @@ type APIProvider interface {
 type APIFunc = func(ctx *APIContext) (resp_msg proto.Message, err erro.Error)
 
 type APIItem struct {
+	n string
 	o APIProvider
 	f APIFunc
 }
@@ -59,6 +61,7 @@ func RegisterAPIProvider(name string, privider APIProvider) {
 		log.E("[web] duplicated api:", name)
 	} else {
 		api_map[name] = &APIItem{
+			n: name,
 			o: privider,
 		}
 	}
@@ -69,37 +72,40 @@ func RegisterAPIFunc(name string, f APIFunc) {
 		log.E("[web] duplicated api:", name)
 	} else {
 		api_map[name] = &APIItem{
+			n: name,
 			f: f,
 		}
 	}
 }
 
-func map_api(name string, w http.ResponseWriter, req *http.Request) (err erro.Error) {
-	if item, ex := api_map[name]; ex {
-		log.I("[local] handle api req:", name)
-		var ctx = &APIContext{
-			req: req,
+func map_api(r *gin.Engine) {
+	for name, item := range api_map {
+		r.POST("/api/"+name, item.Handle)
+	}
+}
+
+func (item *APIItem) Handle(c *gin.Context) {
+	log.I("[local] handle api req:", item.n)
+	var req = c.Request
+	var ctx = &APIContext{
+		req: req,
+	}
+	if resp, re := item.Process(ctx); re != nil {
+		log.D("[local] handle api failed:", re)
+		// 返回错误信息
+		var err_msg = &ErrorMessage{
+			ErrCode: re.Code(),
+			ErrMsg:  re.Msg(),
 		}
-		if resp, re := item.Process(ctx); re != nil {
-			log.D("[local] handle api failed:", re)
-			// 返回错误信息
-			var err_msg = &ErrorMessage{
-				ErrCode: re.Code(),
-				ErrMsg:  re.Msg(),
-			}
-			err = write_response_msg(w, err_msg)
-		} else {
-			log.D("[local] handle api done:", resp)
-			err = write_response_msg(w, resp)
-		}
+		write_response_msg(c, err_msg)
 	} else {
-		log.I("[local] unknown api:", name)
-		err = erro.E_API_UnknownAPI.F("name")
+		log.D("[local] handle api done:", resp)
+		write_response_msg(c, resp)
 	}
 	return
 }
 
-func write_response_msg(w http.ResponseWriter, resp proto.Message) (err erro.Error) {
+func write_response_msg(c *gin.Context, resp proto.Message) (err erro.Error) {
 	if resp == nil {
 		resp = default_response_success
 	}
@@ -110,16 +116,7 @@ func write_response_msg(w http.ResponseWriter, resp proto.Message) (err erro.Err
 	if data, me := marshaler.MarshalToString(resp); me != nil {
 		err = erro.E_API_MarshalResponseFailed.F("err: %v", me)
 	} else {
-		fmt.Fprint(w, data)
-		// var cnt = 0
-		// for cnt < len(data) {
-		// 	if _cnt, we := w.Write(data[cnt:]); we != nil {
-		// 		err = erro.E_API_WriteResponseFailed.F("err: %v", we)
-		// 		break
-		// 	} else {
-		// 		cnt += _cnt
-		// 	}
-		// }
+		c.JSON(http.StatusOK, data)
 	}
 	return
 }
