@@ -45,3 +45,13 @@ func OAuth_ParseCallback(req *http.Request) (tok, verifier string, err erro.Erro
 	}
 	return
 }
+
+func OAuth_AccessToken(tok, verifier, request_secret string) (access_token, access_secret string, err erro.Error) {
+	at, as, ae := oauth_config.AccessToken(tok, request_secret, verifier)
+	if ae != nil {
+		err = erro.E_OAUTH_FAILED.F("err: %v", ae)
+	} else {
+		access_token, access_secret = at, as
+	}
+	return
+}

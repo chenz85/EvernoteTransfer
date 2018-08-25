@@ -134,7 +134,12 @@ func (item *APIItem) Handle(c *gin.Context) {
 		w:           c.Writer,
 		gin_context: c,
 	}
-	if resp, re := item.Process(ctx); re != nil {
+	if resp, re := item.Process(ctx); re == nil {
+		log.D("[local] handle api done:", resp)
+		write_response_msg(c, resp)
+	} else if re.Code() == erro.E_API_Redirect.Code() {
+		// nothing to do
+	} else {
 		log.D("[local] handle api failed:", re)
 		// 返回错误信息
 		var err_msg = &ErrorMessage{
@@ -142,9 +147,6 @@ func (item *APIItem) Handle(c *gin.Context) {
 			ErrMsg:  re.Msg(),
 		}
 		write_response_msg(c, err_msg)
-	} else {
-		log.D("[local] handle api done:", resp)
-		write_response_msg(c, resp)
 	}
 	return
 }

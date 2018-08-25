@@ -6,3 +6,9 @@ package service;
 message api_resp_oauth {
     string authorization_url = 1;
 }
+
+message oauth_info {
+    string sid = 1;
+    string access_token = 2;
+    string access_secret = 3;
+}

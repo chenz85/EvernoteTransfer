@@ -32,7 +32,7 @@ func (m *ApiRespOauth) Reset()         { *m = ApiRespOauth{} }
 func (m *ApiRespOauth) String() string { return proto.CompactTextString(m) }
 func (*ApiRespOauth) ProtoMessage()    {}
 func (*ApiRespOauth) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_710d729a98e06ffc, []int{0}
+	return fileDescriptor_msg_6d77b74d708441e4, []int{0}
 }
 func (m *ApiRespOauth) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -68,8 +68,72 @@ func (m *ApiRespOauth) GetAuthorizationUrl() string {
 	return ""
 }
 
+type OauthInfo struct {
+	Sid                  string   `protobuf:"bytes,1,opt,name=sid,proto3" json:"sid,omitempty"`
+	AccessToken          string   `protobuf:"bytes,2,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
+	AccessSecret         string   `protobuf:"bytes,3,opt,name=access_secret,json=accessSecret,proto3" json:"access_secret,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *OauthInfo) Reset()         { *m = OauthInfo{} }
+func (m *OauthInfo) String() string { return proto.CompactTextString(m) }
+func (*OauthInfo) ProtoMessage()    {}
+func (*OauthInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_msg_6d77b74d708441e4, []int{1}
+}
+func (m *OauthInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *OauthInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_OauthInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *OauthInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_OauthInfo.Merge(dst, src)
+}
+func (m *OauthInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *OauthInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_OauthInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_OauthInfo proto.InternalMessageInfo
+
+func (m *OauthInfo) GetSid() string {
+	if m != nil {
+		return m.Sid
+	}
+	return ""
+}
+
+func (m *OauthInfo) GetAccessToken() string {
+	if m != nil {
+		return m.AccessToken
+	}
+	return ""
+}
+
+func (m *OauthInfo) GetAccessSecret() string {
+	if m != nil {
+		return m.AccessSecret
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*ApiRespOauth)(nil), "service.api_resp_oauth")
+	proto.RegisterType((*OauthInfo)(nil), "service.oauth_info")
 }
 func (m *ApiRespOauth) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -98,6 +162,45 @@ func (m *ApiRespOauth) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *OauthInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *OauthInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if len(m.Sid) > 0 {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintMsg(dAtA, i, uint64(len(m.Sid)))
+		i += copy(dAtA[i:], m.Sid)
+	}
+	if len(m.AccessToken) > 0 {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintMsg(dAtA, i, uint64(len(m.AccessToken)))
+		i += copy(dAtA[i:], m.AccessToken)
+	}
+	if len(m.AccessSecret) > 0 {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintMsg(dAtA, i, uint64(len(m.AccessSecret)))
+		i += copy(dAtA[i:], m.AccessSecret)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
 func encodeVarintMsg(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -111,6 +214,27 @@ func (m *ApiRespOauth) Size() (n int) {
 	var l int
 	_ = l
 	l = len(m.AuthorizationUrl)
+	if l > 0 {
+		n += 1 + l + sovMsg(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *OauthInfo) Size() (n int) {
+	var l int
+	_ = l
+	l = len(m.Sid)
+	if l > 0 {
+		n += 1 + l + sovMsg(uint64(l))
+	}
+	l = len(m.AccessToken)
+	if l > 0 {
+		n += 1 + l + sovMsg(uint64(l))
+	}
+	l = len(m.AccessSecret)
 	if l > 0 {
 		n += 1 + l + sovMsg(uint64(l))
 	}
@@ -190,6 +314,144 @@ func (m *ApiRespOauth) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.AuthorizationUrl = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsg(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsg
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *OauthInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsg
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: oauth_info: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: oauth_info: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sid", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsg
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sid = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccessToken", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsg
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AccessToken = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccessSecret", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsg
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthMsg
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.AccessSecret = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -318,16 +580,20 @@ var (
 	ErrIntOverflowMsg   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("service/msg.proto", fileDescriptor_msg_710d729a98e06ffc) }
+func init() { proto.RegisterFile("service/msg.proto", fileDescriptor_msg_6d77b74d708441e4) }
 
-var fileDescriptor_msg_710d729a98e06ffc = []byte{
-	// 116 bytes of a gzipped FileDescriptorProto
+var fileDescriptor_msg_6d77b74d708441e4 = []byte{
+	// 185 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2c, 0x4e, 0x2d, 0x2a,
 	0xcb, 0x4c, 0x4e, 0xd5, 0xcf, 0x2d, 0x4e, 0xd7, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x87,
 	0x0a, 0x29, 0xd9, 0x72, 0xf1, 0x25, 0x16, 0x64, 0xc6, 0x17, 0xa5, 0x16, 0x17, 0xc4, 0xe7, 0x27,
 	0x96, 0x96, 0x64, 0x08, 0x69, 0x73, 0x09, 0x82, 0xe8, 0xfc, 0xa2, 0xcc, 0xaa, 0xc4, 0x92, 0xcc,
 	0xfc, 0xbc, 0xf8, 0xd2, 0xa2, 0x1c, 0x09, 0x46, 0x05, 0x46, 0x0d, 0xce, 0x20, 0x01, 0x14, 0x89,
-	0xd0, 0xa2, 0x1c, 0x27, 0x9e, 0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48,
-	0x8e, 0x31, 0x89, 0x0d, 0x6c, 0xb8, 0x31, 0x20, 0x00, 0x00, 0xff, 0xff, 0x74, 0x19, 0x7f, 0xdd,
-	0x71, 0x00, 0x00, 0x00,
+	0xd0, 0xa2, 0x1c, 0xa5, 0x34, 0x2e, 0x2e, 0xb0, 0xae, 0xf8, 0xcc, 0xbc, 0xb4, 0x7c, 0x21, 0x01,
+	0x2e, 0xe6, 0xe2, 0xcc, 0x14, 0xa8, 0x62, 0x10, 0x53, 0x48, 0x91, 0x8b, 0x27, 0x31, 0x39, 0x39,
+	0xb5, 0xb8, 0x38, 0xbe, 0x24, 0x3f, 0x3b, 0x35, 0x4f, 0x82, 0x09, 0x2c, 0xc5, 0x0d, 0x11, 0x0b,
+	0x01, 0x09, 0x09, 0x29, 0x73, 0xf1, 0x42, 0x95, 0x14, 0xa7, 0x26, 0x17, 0xa5, 0x96, 0x48, 0x30,
+	0x83, 0xd5, 0x40, 0xf5, 0x05, 0x83, 0xc5, 0x9c, 0x78, 0x4e, 0x3c, 0x92, 0x63, 0xbc, 0xf0, 0x48,
+	0x8e, 0xf1, 0xc1, 0x23, 0x39, 0xc6, 0x24, 0x36, 0xb0, 0x27, 0x8c, 0x01, 0x01, 0x00, 0x00, 0xff,
+	0xff, 0x1d, 0xe2, 0x15, 0xb6, 0xd9, 0x00, 0x00, 0x00,
 }

@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	"github.com/czsilence/EvernoteTransfer/erro"
+	"github.com/czsilence/EvernoteTransfer/storage"
 	"github.com/czsilence/EvernoteTransfer/storage/badger"
 	"github.com/czsilence/EvernoteTransfer/web"
-	"github.com/czsilence/go/log"
 	"github.com/gogo/protobuf/proto"
 )
 
@@ -32,13 +32,26 @@ func _api_oauth_callback(ctx *web.APIContext) (resp_msg proto.Message, err erro.
 	if tok, verifier, pe := OAuth_ParseCallback(ctx.Req()); pe != nil {
 		err = pe
 	} else {
-		log.W("TODO:", tok, verifier, ctx.Sid())
-		if sec, ex := badger.DB().Get("oauth_req_secret:" + ctx.Sid()); !ex {
+		var sid = ctx.Sid()
+		if sec, ex := badger.DB().Get("oauth_req_secret:" + sid); !ex {
 			err = erro.E_OAuth_NoRequestSecret
 		} else {
-			log.W("secret:", sec)
+			var access_token, access_secret string
+			if access_token, access_secret, err = OAuth_AccessToken(tok, verifier, string(sec)); err == nil {
+				var oauth_info = &OauthInfo{
+					Sid:          sid,
+					AccessToken:  access_token,
+					AccessSecret: access_secret,
+				}
+				err = storage.Put(badger.DB(), "oauth:"+sid, oauth_info)
+			}
 		}
 
+	}
+
+	if err == nil {
+		ctx.Gin().Redirect(http.StatusMovedPermanently, "/")
+		err = erro.E_API_Redirect
 	}
 	return
 }
