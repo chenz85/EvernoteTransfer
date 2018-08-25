@@ -1,8 +1,11 @@
 package web
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"net/http"
 
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 
 	"github.com/czsilence/EvernoteTransfer/erro"
@@ -16,10 +19,33 @@ type APIContext struct {
 	msg    proto.Message
 	header typo.Any
 	req    *http.Request
+	w      http.ResponseWriter
+
+	gin_context *gin.Context
 }
 
 func (ctx *APIContext) Req() *http.Request {
 	return ctx.req
+}
+
+func (ctx *APIContext) Gin() *gin.Context {
+	return ctx.gin_context
+}
+
+func (ctx *APIContext) Sid() (sid string) {
+	session := sessions.Default(ctx.gin_context)
+
+	if v := session.Get("sid"); v == nil {
+		sid = randomSessionId()
+		session.Set("sid", sid)
+	} else if _sid, ok := v.(string); !ok || len(_sid) == 0 {
+		sid = randomSessionId()
+		session.Set("sid", sid)
+	} else {
+		sid = _sid
+		session.Save()
+	}
+	return
 }
 
 type APIProvider interface {
@@ -51,6 +77,8 @@ var (
 		ErrCode: 0,
 		ErrMsg:  "sucess",
 	}
+
+	cookie_store sessions.CookieStore
 )
 
 func init() {
@@ -82,6 +110,10 @@ func RegisterAPIFunc(name string, method string, f APIFunc) {
 }
 
 func map_api(r *gin.Engine) {
+	// TODO: define a cookie key
+	cookie_store := sessions.NewCookieStore([]byte("<key if necessary>"))
+	r.Use(sessions.Sessions("user_session", cookie_store))
+
 	for name, item := range api_map {
 		switch item.m {
 		case http.MethodGet:
@@ -98,7 +130,9 @@ func (item *APIItem) Handle(c *gin.Context) {
 	log.I("[local] handle api req:", item.n)
 	var req = c.Request
 	var ctx = &APIContext{
-		req: req,
+		req:         req,
+		w:           c.Writer,
+		gin_context: c,
 	}
 	if resp, re := item.Process(ctx); re != nil {
 		log.D("[local] handle api failed:", re)
@@ -128,5 +162,13 @@ func write_response_msg(c *gin.Context, resp proto.Message) (err erro.Error) {
 	} else {
 		c.JSON(http.StatusOK, data)
 	}
+	return
+}
+
+// 生成指定长度的随机数据
+func randomSessionId() (sid string) {
+	var b = make([]byte, 32)
+	rand.Read(b)
+	sid = base64.StdEncoding.EncodeToString(b)
 	return
 }

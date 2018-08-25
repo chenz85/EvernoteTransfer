@@ -25,13 +25,14 @@ func oauth_init() {
 	}
 }
 
-func OAuth_Auth() (auth_url string, err erro.Error) {
-	if tok, _, re := oauth_config.RequestToken(); re != nil {
+func OAuth_Auth() (auth_url string, request_secret string, err erro.Error) {
+	if tok, sec, re := oauth_config.RequestToken(); re != nil {
 		err = erro.E_OAUTH_FAILED.F("err: %v", re)
 	} else if authorizationURL, ae := oauth_config.AuthorizationURL(tok); ae != nil {
 		err = erro.E_OAUTH_FAILED.F("err: %v", ae)
 	} else {
 		auth_url = authorizationURL.String()
+		request_secret = sec
 	}
 	return
 }
