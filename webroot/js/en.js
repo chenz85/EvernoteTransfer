@@ -16,6 +16,17 @@ function start() {
                 alert('auth failed')
             }
         })
+    });
+
+    $('#btn_user').on('click', function() {
+        api.user({
+            success: function(data) {
+                console.log('user data:', data)
+            },
+            fail: function() {
+                alert('get user data failed')
+            }
+        })
     })
 }
 

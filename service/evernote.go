@@ -1,18 +1,23 @@
 package service
 
 import (
+	"context"
 	"net/http"
 
+	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/czsilence/EvernoteTransfer/erro"
 	"github.com/czsilence/EvernoteTransfer/storage"
 	"github.com/czsilence/EvernoteTransfer/storage/badger"
 	"github.com/czsilence/EvernoteTransfer/web"
+	"github.com/czsilence/evernote-sdk-go/evernote"
+	"github.com/czsilence/go/log"
 	"github.com/gogo/protobuf/proto"
 )
 
 func init() {
 	web.RegisterAPIFunc("en/oauth", http.MethodPost, _api_oauth)
 	web.RegisterAPIFunc("en/oauth/callback", http.MethodGet, _api_oauth_callback)
+	web.RegisterAPIFunc("en/user", http.MethodPost, _api_en_user)
 }
 
 func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
@@ -58,6 +63,50 @@ func _api_oauth_callback(ctx *web.APIContext) (resp_msg proto.Message, err erro.
 	if err == nil {
 		ctx.Gin().Redirect(http.StatusMovedPermanently, "/")
 		err = erro.E_API_Redirect
+	}
+	return
+}
+
+//////////////////////////
+func _api_en_user(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
+	var sid = ctx.Sid()
+	var oauth_info = new(OauthInfo)
+	if !storage.Get(badger.DB(), "oauth:"+sid, oauth_info) {
+		err = erro.E_OAuth_OAuthInfoNotFound
+	} else {
+		resp_msg = oauth_info
+		_user_info(oauth_info)
+	}
+	return
+}
+
+func _user_info(o *OauthInfo) (user_info proto.Message, err erro.Error) {
+
+	if trans, te := thrift.NewTHttpClient(o.EdamNoteStoreUrl); te != nil {
+
+	} else if pf := thrift.NewTBinaryProtocolFactory(true, true); pf == nil {
+
+	} else if clt := evernote.NewNoteStoreClientFactory(trans, pf); clt == nil {
+
+	} else {
+		if tags, te := clt.ListTags(context.Background(), o.AccessToken); te != nil {
+
+		} else {
+			log.W("tags:", len(tags))
+			for i, tag := range tags {
+				log.W2("tag [#%d]: %s", i, tag.GetName())
+			}
+		}
+
+		if nbs, nbse := clt.ListNotebooks(context.Background(), o.AccessToken); nbse != nil {
+
+		} else {
+			log.W("notebooks:", len(nbs))
+			for i, notebook := range nbs {
+				log.W2("notebook [#%d]: %s", i, notebook.GetName())
+			}
+		}
+
 	}
 	return
 }

@@ -97,6 +97,17 @@ var API = (function() {
             fail: callback && callback.fail,
         });
     }
+
+    // 获取用户信息
+    API.prototype.user = function(callback) {
+        var _this = this;
+
+        api_request('en/user', null, {
+            success: callback && callback.success,
+            fail: callback && callback.fail,
+        });
+    }
+
     return API;
 })();
 
