@@ -89,7 +89,8 @@ func _user_info(o *OauthInfo) (user_info proto.Message, err erro.Error) {
 	} else if clt := evernote.NewNoteStoreClientFactory(trans, pf); clt == nil {
 
 	} else {
-		if tags, te := clt.ListTags(context.Background(), o.AccessToken); te != nil {
+		ctx := context.Background()
+		if tags, te := clt.ListTags(ctx, o.AccessToken); te != nil {
 
 		} else {
 			log.W("tags:", len(tags))
@@ -98,13 +99,28 @@ func _user_info(o *OauthInfo) (user_info proto.Message, err erro.Error) {
 			}
 		}
 
-		if nbs, nbse := clt.ListNotebooks(context.Background(), o.AccessToken); nbse != nil {
+		if nbs, nbse := clt.ListNotebooks(ctx, o.AccessToken); nbse != nil {
 
 		} else {
 			log.W("notebooks:", len(nbs))
 			for i, notebook := range nbs {
 				log.W2("notebook [#%d]: %s", i, notebook.GetName())
+				// log.W2("notebook: %+v", notebook)
+				log.W2("notebook USN: %d", notebook.GetUpdateSequenceNum())
+
+				filter := evernote.NewSyncChunkFilter()
+				include_notes := true
+				filter.IncludeNotes = &include_notes
+				if chunk, ce := clt.GetFilteredSyncChunk(ctx, o.AccessToken, 0, 5, filter); ce != nil {
+				} else {
+					log.W2("sync chunk: %+v", chunk)
+				}
 			}
+		}
+
+		if state, se := clt.GetSyncState(ctx, o.AccessToken); se != nil {
+		} else {
+			log.W("sync state:", state)
 		}
 
 	}
