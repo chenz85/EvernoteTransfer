@@ -89,10 +89,12 @@ var API = (function() {
     }
 
     // 开始oauth验证
-    API.prototype.oauth = function(callback) {
+    API.prototype.oauth = function(side, callback) {
         var _this = this;
 
-        api_request('en/oauth', null, {
+        api_request('en/oauth', {
+            side: side,
+        }, {
             success: callback && callback.success,
             fail: callback && callback.fail,
         });
