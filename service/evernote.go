@@ -1,16 +1,12 @@
 package service
 
 import (
-	"context"
 	"net/http"
 
-	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/czsilence/EvernoteTransfer/erro"
 	"github.com/czsilence/EvernoteTransfer/storage"
 	"github.com/czsilence/EvernoteTransfer/storage/badger"
 	"github.com/czsilence/EvernoteTransfer/web"
-	"github.com/czsilence/evernote-sdk-go/evernote"
-	"github.com/czsilence/go/log"
 	"github.com/gogo/protobuf/proto"
 )
 
@@ -75,54 +71,6 @@ func _api_en_user(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) 
 		err = erro.E_OAuth_OAuthInfoNotFound
 	} else {
 		resp_msg = oauth_info
-		_user_info(oauth_info)
-	}
-	return
-}
-
-func _user_info(o *OauthInfo) (user_info proto.Message, err erro.Error) {
-
-	if trans, te := thrift.NewTHttpClient(o.EdamNoteStoreUrl); te != nil {
-
-	} else if pf := thrift.NewTBinaryProtocolFactory(true, true); pf == nil {
-
-	} else if clt := evernote.NewNoteStoreClientFactory(trans, pf); clt == nil {
-
-	} else {
-		ctx := context.Background()
-		if tags, te := clt.ListTags(ctx, o.AccessToken); te != nil {
-
-		} else {
-			log.W("tags:", len(tags))
-			for i, tag := range tags {
-				log.W2("tag [#%d]: %s", i, tag.GetName())
-			}
-		}
-
-		if nbs, nbse := clt.ListNotebooks(ctx, o.AccessToken); nbse != nil {
-
-		} else {
-			log.W("notebooks:", len(nbs))
-			for i, notebook := range nbs {
-				log.W2("notebook [#%d]: %s", i, notebook.GetName())
-				// log.W2("notebook: %+v", notebook)
-				log.W2("notebook USN: %d", notebook.GetUpdateSequenceNum())
-
-				filter := evernote.NewSyncChunkFilter()
-				include_notes := true
-				filter.IncludeNotes = &include_notes
-				if chunk, ce := clt.GetFilteredSyncChunk(ctx, o.AccessToken, 0, 5, filter); ce != nil {
-				} else {
-					log.W2("sync chunk: %+v", chunk)
-				}
-			}
-		}
-
-		if state, se := clt.GetSyncState(ctx, o.AccessToken); se != nil {
-		} else {
-			log.W("sync state:", state)
-		}
-
 	}
 	return
 }
