@@ -27,9 +27,9 @@ func oauth_init() {
 
 func OAuth_Auth() (auth_url string, request_secret string, err erro.Error) {
 	if tok, sec, re := oauth_config.RequestToken(); re != nil {
-		err = erro.E_OAUTH_FAILED.F("err: %v", re)
+		err = erro.E_OAUTH_FAILED.With(re)
 	} else if authorizationURL, ae := oauth_config.AuthorizationURL(tok); ae != nil {
-		err = erro.E_OAUTH_FAILED.F("err: %v", ae)
+		err = erro.E_OAUTH_FAILED.With(ae)
 	} else {
 		auth_url = authorizationURL.String()
 		request_secret = sec
@@ -39,7 +39,7 @@ func OAuth_Auth() (auth_url string, request_secret string, err erro.Error) {
 
 func OAuth_ParseCallback(req *http.Request) (tok, verifier string, err erro.Error) {
 	if _tok, _verifier, pe := oauth1.ParseAuthorizationCallback(req); pe != nil {
-		err = erro.E_OAUTH_FAILED.F("err: %v", pe)
+		err = erro.E_OAUTH_FAILED.With(pe)
 	} else {
 		tok, verifier = _tok, _verifier
 	}
@@ -49,7 +49,7 @@ func OAuth_ParseCallback(req *http.Request) (tok, verifier string, err erro.Erro
 func OAuth_AccessToken(tok, verifier, request_secret string) (response_values map[string]string, err erro.Error) {
 	values, ae := oauth_config.RetrieveAccessToken(tok, request_secret, verifier)
 	if ae != nil {
-		err = erro.E_OAUTH_FAILED.F("err: %v", ae)
+		err = erro.E_OAUTH_FAILED.With(ae)
 	} else {
 		response_values = make(map[string]string)
 		for k, _ := range values {

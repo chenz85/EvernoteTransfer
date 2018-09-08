@@ -160,7 +160,7 @@ func write_response_msg(c *gin.Context, resp proto.Message) (err erro.Error) {
 		OrigName: true,
 	}
 	if data, me := marshaler.MarshalToString(resp); me != nil {
-		err = erro.E_API_MarshalResponseFailed.F("err: %v", me)
+		err = erro.E_API_MarshalResponseFailed.With(me)
 	} else {
 		c.JSON(http.StatusOK, data)
 	}

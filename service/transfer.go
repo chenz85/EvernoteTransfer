@@ -21,7 +21,7 @@ type transport_info struct {
 func init_transport(o *OauthInfo) (info *transport_info, err erro.Error) {
 
 	if trans, te := thrift.NewTHttpClient(o.EdamNoteStoreUrl); te != nil {
-		err = erro.E_Transfer_InitTransportFailed.F("err: %v", te)
+		err = erro.E_Transfer_InitTransportFailed.With(te)
 	} else if pf := thrift.NewTBinaryProtocolFactory(true, true); pf == nil {
 		err = erro.E_Transfer_InitProtocolFailed
 	} else if clt := evernote.NewNoteStoreClientFactory(trans, pf); clt == nil {
@@ -74,13 +74,13 @@ func (t *Transfer) transfer() {
 
 func (t *Transfer) t_tags() {
 	if tags, te := t.from.clt.ListTags(t.ctx, t.from.oauth.AccessToken); te != nil {
-		t.last_err = erro.E_Transfer_Tag_ListTagsFailed.F("err: %v", te)
+		t.last_err = erro.E_Transfer_Tag_ListTagsFailed.With(te)
 	} else {
 		log.D("tags:", len(tags))
 		for _, tag := range tags {
 			log.D2("tag [%s]: %s", tag.GetGUID(), tag.GetName())
 			if new_tag, ne := t.to.clt.CreateTag(t.ctx, t.to.oauth.AccessToken, tag); ne != nil {
-				t.last_err = erro.E_Transfer_Tag_CreateTagFailed.F("err: %v", ne)
+				t.last_err = erro.E_Transfer_Tag_CreateTagFailed.With(ne)
 				break
 			} else {
 				t.tag_map[tag.GetGUID()] = new_tag.GetGUID()
@@ -92,13 +92,13 @@ func (t *Transfer) t_tags() {
 
 func (t *Transfer) t_notebooks() {
 	if nbs, nbse := t.from.clt.ListNotebooks(t.ctx, t.from.oauth.AccessToken); nbse != nil {
-		t.last_err = erro.E_Transfer_NB_ListNotebookFailed.F("err: %v", nbse)
+		t.last_err = erro.E_Transfer_NB_ListNotebookFailed.With(nbse)
 	} else {
 		log.D("notebooks:", len(nbs))
 		for _, notebook := range nbs {
 			log.D2("notebook [%s]: %s", notebook.GetGUID(), notebook.GetName())
 			if new_nb, ne := t.to.clt.CreateNotebook(t.ctx, t.to.oauth.AccessToken, notebook); ne != nil {
-				t.last_err = erro.E_Transfer_NB_CreateNotebookFailed.F("err: %v", ne)
+				t.last_err = erro.E_Transfer_NB_CreateNotebookFailed.With(ne)
 			} else {
 				t.notebook_map[notebook.GetGUID()] = new_nb.GetGUID()
 				log.D2("-> new tag [%s]: %s", new_nb.GetGUID(), new_nb.GetName())
@@ -112,7 +112,7 @@ func (t *Transfer) t_notes() {
 	include_notes := true
 	filter.IncludeNotes = &include_notes
 	if chunk, ce := t.from.clt.GetFilteredSyncChunk(t.ctx, t.from.oauth.AccessToken, 0, 5, filter); ce != nil {
-		t.last_err = erro.E_Transfer_Note_GetSyncChunkFailed.F("err: %v", ce)
+		t.last_err = erro.E_Transfer_Note_GetSyncChunkFailed.With(ce)
 	} else {
 		log.D2("sync chunk: %d", chunk.GetChunkHighUSN())
 		for _, note := range chunk.Notes {

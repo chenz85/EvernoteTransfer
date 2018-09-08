@@ -54,7 +54,7 @@ func (db *_BadgerDB) Put(key string, data []byte) erro.Error {
 	})
 
 	if err != nil {
-		return erro.E_Storage_PutFailed.F("err: %v", err)
+		return erro.E_Storage_PutFailed.With(err)
 	}
 	return nil
 }
@@ -85,7 +85,7 @@ func (db *_BadgerDB) Del(key string) erro.Error {
 	})
 
 	if err != nil {
-		return erro.E_Storage_DelFailed.F("err: %v", err)
+		return erro.E_Storage_DelFailed.With(err)
 	}
 	return nil
 }

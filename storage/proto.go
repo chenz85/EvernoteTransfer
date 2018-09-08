@@ -24,7 +24,7 @@ func Get(db DB, key string, val typo.Any) bool {
 
 func Put(db DB, key string, val proto.Message) erro.Error {
 	if data, err := proto.Marshal(val); err != nil {
-		return erro.E_Storage_DataMarshalFailed.F("err: %v", err)
+		return erro.E_Storage_DataMarshalFailed.With(err)
 	} else {
 		return db.Put(key, data)
 	}
