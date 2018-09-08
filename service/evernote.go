@@ -17,7 +17,7 @@ func init() {
 }
 
 func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
-	if auth_url, request_secret, ae := OAuth_Auth(); ae != nil {
+	if auth_url, request_secret, ae := oauth_en.OAuth_Auth(); ae != nil {
 		err = ae
 	} else {
 		resp_msg = &ApiRespOauth{
@@ -30,14 +30,14 @@ func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
 }
 
 func _api_oauth_callback(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
-	if tok, verifier, pe := OAuth_ParseCallback(ctx.Req()); pe != nil {
+	if tok, verifier, pe := oauth_en.OAuth_ParseCallback(ctx.Req()); pe != nil {
 		err = pe
 	} else {
 		var sid = ctx.Sid()
 		if sec, ex := badger.DB().Get("oauth_req_secret:" + sid); !ex {
 			err = erro.E_OAuth_NoRequestSecret
 		} else {
-			if values, ate := OAuth_AccessToken(tok, verifier, string(sec)); ate != nil {
+			if values, ate := oauth_en.OAuth_AccessToken(tok, verifier, string(sec)); ate != nil {
 				err = ate
 			} else {
 				var oauth_info = &OauthInfo{
