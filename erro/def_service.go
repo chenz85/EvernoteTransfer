@@ -3,9 +3,10 @@ package erro
 import "github.com/czsilence/go/erro"
 
 var (
-	E_OAUTH_FAILED            = erro.New(300001, "oauth failed")
-	E_OAuth_NoRequestSecret   = erro.New(300002, "no request secret found")
-	E_OAuth_OAuthInfoNotFound = erro.New(300003, "oauth info not found")
+	E_OAUTH_FAILED              = erro.New(300001, "oauth failed")
+	E_OAuth_NoRequestSecret     = erro.New(300002, "no request secret found")
+	E_OAuth_OAuthInfoNotFound   = erro.New(300003, "oauth info not found")
+	E_OAuth_OAuthConfigNotFound = erro.New(300004, "can not find oauth config")
 
 	E_Transfer_InitTransportFailed = erro.New(300101, "init transport failed")
 	E_Transfer_InitProtocolFailed  = erro.New(300102, "init transport protocol failed")
