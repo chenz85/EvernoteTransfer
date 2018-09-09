@@ -13,7 +13,7 @@ import (
 func init() {
 	web.RegisterAPIFunc("en/oauth", http.MethodPost, _api_oauth)
 	web.RegisterAPIFunc("en/oauth/callback", http.MethodGet, _api_oauth_callback)
-	web.RegisterAPIFunc("en/user", http.MethodPost, _api_en_user)
+	web.RegisterAPIFunc("en/xfer", http.MethodPost, _api_en_transfer)
 }
 
 func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
@@ -64,7 +64,7 @@ func _api_oauth_callback(ctx *web.APIContext) (resp_msg proto.Message, err erro.
 }
 
 //////////////////////////
-func _api_en_user(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
+func _api_en_transfer(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
 	var sid = ctx.Sid()
 	var oauth_info = new(OauthInfo)
 	if !storage.Get(badger.DB(), "oauth:"+sid, oauth_info) {
