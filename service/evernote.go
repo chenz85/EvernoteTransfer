@@ -7,6 +7,7 @@ import (
 	"github.com/czsilence/EvernoteTransfer/storage"
 	"github.com/czsilence/EvernoteTransfer/storage/badger"
 	"github.com/czsilence/EvernoteTransfer/web"
+	"github.com/gogo/protobuf/jsonpb"
 	"github.com/gogo/protobuf/proto"
 )
 
@@ -17,7 +18,13 @@ func init() {
 }
 
 func _api_oauth(ctx *web.APIContext) (resp_msg proto.Message, err erro.Error) {
-	if oc, ex := get_oauth_config(ctx.Gin().Query("svr"), ctx.Gin().Query("side")); !ex {
+	var query = new(ApiReqOauth)
+	if de := jsonpb.UnmarshalString(string(ctx.Data()), query); de != nil {
+		err = erro.E_API_InvalidRequest
+		return
+	}
+
+	if oc, ex := get_oauth_config(query.Svr, query.Side); !ex {
 		err = erro.E_OAuth_OAuthConfigNotFound
 	} else if auth_url, request_secret, ae := oc.OAuth_Auth(); ae != nil {
 		err = ae

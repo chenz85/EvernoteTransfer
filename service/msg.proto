@@ -3,6 +3,11 @@ syntax = "proto3";
 package service;
 
 // api: oauth
+message api_req_oauth {
+    string svr = 1;
+    string side = 2;
+}
+
 message api_resp_oauth {
     string authorization_url = 1;
 }

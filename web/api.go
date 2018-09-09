@@ -3,6 +3,7 @@ package web
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/contrib/sessions"
@@ -16,7 +17,8 @@ import (
 )
 
 type APIContext struct {
-	msg    proto.Message
+	// msg    proto.Message
+	data   []byte
 	header typo.Any
 	req    *http.Request
 	w      http.ResponseWriter
@@ -30,6 +32,10 @@ func (ctx *APIContext) Req() *http.Request {
 
 func (ctx *APIContext) Gin() *gin.Context {
 	return ctx.gin_context
+}
+
+func (ctx *APIContext) Data() []byte {
+	return ctx.data
 }
 
 func (ctx *APIContext) Sid() (sid string) {
@@ -129,10 +135,13 @@ func map_api(r *gin.Engine) {
 func (item *APIItem) Handle(c *gin.Context) {
 	log.I("[local] handle api req:", item.n)
 	var req = c.Request
+	data, _ := ioutil.ReadAll(req.Body)
+
 	var ctx = &APIContext{
 		req:         req,
 		w:           c.Writer,
 		gin_context: c,
+		data:        data,
 	}
 	if resp, re := item.Process(ctx); re == nil {
 		log.D("[local] handle api done:", resp)

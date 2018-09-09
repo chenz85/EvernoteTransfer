@@ -7,4 +7,5 @@ var (
 	E_API_MarshalResponseFailed = erro.New(201002, "marshal response data failed")
 	E_API_WriteResponseFailed   = erro.New(201003, "write response failed")
 	E_API_Redirect              = erro.New(201004, "already redirect, ignore write response")
+	E_API_InvalidRequest        = erro.New(201005, "invalid request")
 )
