@@ -7,7 +7,6 @@
 
         <style>
             .center {
-                width: 100px;
                 text-align: center;
                 margin: auto;
             }
@@ -15,9 +14,24 @@
 
     </head>
     <body>
-        <div class="center">Welcome</div>
-        <input type="button" id="btn_oauth_from" value="auth from account"/>
-        <input type="button" id="btn_oauth_to" value="auth to account"/>
-        <input type="button" id="btn_user" value="test get user info"/>
+        <div class="center">Evernote Transfer</div>
+        <div>
+            <h3>
+                <strong>From:</strong>
+                <input type="button" id="btn_oauth_from_en" value="Evernote"/>
+                <input type="button" id="btn_oauth_from_yx" value="印象笔记"/>
+            </h3>
+        </div>
+        <div>
+            <h3>
+                <strong>To:</strong>
+                <input type="button" id="btn_oauth_to_en" value="Evernote"/>
+                <input type="button" id="btn_oauth_to_yx" value="印象笔记"/>
+            </h3>
+        </div>
+        <div>
+            <h3></h3>
+            <input type="button" id="btn_transfer" value="transfer"/>
+        </div>
     </body>
 </html>

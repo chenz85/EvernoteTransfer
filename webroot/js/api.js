@@ -89,22 +89,23 @@ var API = (function() {
     }
 
     // 开始oauth验证
-    API.prototype.oauth = function(side, callback) {
+    API.prototype.oauth = function(side, svr, callback) {
         var _this = this;
 
         api_request('en/oauth', {
-            side: side,
+            side: side, // from/to
+            svr: svr,   // en/yx
         }, {
             success: callback && callback.success,
             fail: callback && callback.fail,
         });
     }
 
-    // 获取用户信息
-    API.prototype.user = function(callback) {
+    // 开始数据迁移
+    API.prototype.transfer = function(callback) {
         var _this = this;
 
-        api_request('en/user', null, {
+        api_request('en/xfer', null, {
             success: callback && callback.success,
             fail: callback && callback.fail,
         });
