@@ -14,10 +14,10 @@ var (
 func Start(_opt typo.Map) {
 	config(_opt)
 
-	oauth_mapper["en:from"] = oauth.NewConfig(opt.Evernote.Key, opt.Evernote.Secret, "http://127.0.0.1:8001/api/en/oauth/callback?svr=en&side=from")
-	oauth_mapper["en:to"] = oauth.NewConfig(opt.Evernote.Key, opt.Evernote.Secret, "http://127.0.0.1:8001/api/en/oauth/callback?svr=en&side=to")
-	oauth_mapper["yx:from"] = oauth.NewConfig(opt.Yinxiang.Key, opt.Yinxiang.Secret, "http://127.0.0.1:8001/api/en/oauth/callback?svr=yx&side=from")
-	oauth_mapper["yx:to"] = oauth.NewConfig(opt.Yinxiang.Key, opt.Yinxiang.Secret, "http://127.0.0.1:8001/api/en/oauth/callback?svr=yx&side=to")
+	oauth_mapper["en:from"] = oauth.NewConfig(opt.Evernote.Key, opt.Evernote.Secret, opt.Evernote.Host, "http://127.0.0.1:8001/api/en/oauth/callback?svr=en&side=from")
+	oauth_mapper["en:to"] = oauth.NewConfig(opt.Evernote.Key, opt.Evernote.Secret, opt.Evernote.Host, "http://127.0.0.1:8001/api/en/oauth/callback?svr=en&side=to")
+	oauth_mapper["yx:from"] = oauth.NewConfig(opt.Yinxiang.Key, opt.Yinxiang.Secret, opt.Yinxiang.Host, "http://127.0.0.1:8001/api/en/oauth/callback?svr=yx&side=from")
+	oauth_mapper["yx:to"] = oauth.NewConfig(opt.Yinxiang.Key, opt.Yinxiang.Secret, opt.Yinxiang.Host, "http://127.0.0.1:8001/api/en/oauth/callback?svr=yx&side=to")
 }
 
 func get_oauth_config(svr, side string) (conf oauth.OAuthConfig, exist bool) {

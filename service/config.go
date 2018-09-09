@@ -21,6 +21,7 @@ var (
 type ConsumerInfo struct {
 	Key    string
 	Secret string
+	Host   string
 }
 
 type ServiceOption struct {
@@ -46,6 +47,7 @@ func config(_opt typo.Map) (err error) {
 	} else if opt.Evernote.Secret, ok = val.(string); !ok || len(opt.Evernote.Secret) == 0 {
 		return E_InvalidOption
 	}
+	opt.Evernote.Host = "https://sandbox.evernote.com/" // www.evernote.com
 
 	if val, ex := _opt[E_YinxiangConsumerKey]; !ex {
 		return E_MissingOption
@@ -57,6 +59,7 @@ func config(_opt typo.Map) (err error) {
 	} else if opt.Yinxiang.Secret, ok = val.(string); !ok || len(opt.Yinxiang.Secret) == 0 {
 		return E_InvalidOption
 	}
+	opt.Yinxiang.Host = "https://sandbox.evernote.com/" // app.yinxiang.com
 
 	return
 }

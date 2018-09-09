@@ -14,15 +14,15 @@ type _OAuthConfigInternal struct {
 	c *oauth1.Config
 }
 
-func NewConfig(key, secret, callback string) OAuthConfig {
+func NewConfig(key, secret, host, callback string) OAuthConfig {
 	var oauth_config = &oauth1.Config{
 		ConsumerKey:    key,
 		ConsumerSecret: secret,
 		CallbackURL:    callback,
 		Endpoint: oauth1.Endpoint{
-			RequestTokenURL: "https://sandbox.evernote.com/oauth",
-			AuthorizeURL:    "https://sandbox.evernote.com/OAuth.action",
-			AccessTokenURL:  "https://sandbox.evernote.com/oauth",
+			RequestTokenURL: host + "oauth",
+			AuthorizeURL:    host + "OAuth.action",
+			AccessTokenURL:  host + "oauth",
 		},
 	}
 
